@@ -29,7 +29,7 @@ setup(
 
     entry_points={'console_scripts': ['image_processing_project = image_processing_project.image_processing_project:main',
                                       ],
-                  },     package_dir={'image_processing_project': 'image_processing_project'},
+                  },     package_dir={'image_processing_project': 'image_processing_project'}, install_requires=['numpy', 'matplotlib'],
 
     test_suite='tests',
     # Additional entries you may want simply uncomment the lines you want and fill in the data

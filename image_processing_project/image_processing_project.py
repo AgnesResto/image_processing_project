@@ -7,14 +7,24 @@ processing of immunofluorescent staining
 
 Handles the primary functions
 """
+
 import os
 import glob
 import sys
-import argparse
+from argparse import ArgumentParser
 import cv2
 import numpy as np
 #import pandas as pd
 from scipy import stats
+import errno
+
+SUCCESS = 0
+INVALID_DATA = 1
+IO_ERROR = 2
+ENNOENT = 3
+# DEFAULT_PATH_NAME = 'C:/Users/Agnes Resto Irizarry/AppData/Local/Packages/CanonicalGroupLimited.UbuntuonWindows_' \
+                    # '79rhkp1fndgsc/LocalState/rootfs/home/aresto/datasci_project_/data/external/foxa2-localized/'
+DEFAULT_PATH_NAME = 'C:/Users/Agnes Resto Irizarry/Desktop/DataSci/foxa2-localized/'
 
 
 def warning(*objs):
@@ -49,20 +59,27 @@ def parse_cmdline(argv):
         argv = sys.argv[1:]
 
     # initialize the parser object:
-    parser = argparse.ArgumentParser()
-    # parser.add_argument("-i", "--input_rates", help="The location of the input rates file",
-    #                     default=DEF_IRATE_FILE, type=read_input_rates)
-    parser.add_argument("-n", "--no_attribution", help="Whether to include attribution",
-                        action='store_false')
+    parser = ArgumentParser(description='Reads images with fluorescent staining and analyzes fluorescent intensity of '
+                                        'each channel and morphology of each cell cluster. Additionally, it computes '
+                                        'the p-value of the fluorescent intensity of each channel.')
+    parser.add_argument("-p", "--path_data_file", help="The location (directory path) of the csv file with the images"
+                                                       "data to analyze",
+                        default=DEFAULT_PATH_NAME)
     args = None
     try:
         args = parser.parse_args(argv)
-    except IOError as e:
-        warning("Problems reading file:", e)
+        print(args)
+        os.chdir(str(args.path_data_file))
+    except errno.ENOENT as e:
+        print("No such directory:", e)
         parser.print_help()
-        return args, 2
+        return args, ENNOENT
+    except ValueError as e:
+        print("Invalid path name:", e)
+        parser.print_help()
+        return args, INVALID_DATA
 
-    return args, 0
+    return args, SUCCESS
 
 
 def get_file_names(path):
