@@ -11,8 +11,8 @@ import os
 import glob
 import sys
 import argparse
-#import cv2
-#import numpy as np
+import cv2
+import numpy as np
 #import pandas as pd
 #from scipy import stats
 
@@ -82,6 +82,33 @@ def names_dict(files_in_folder):
         group.append(x)
         dictionary[x[:11]] = group
     return dictionary
+
+
+def enhance_contrast(image):
+    # enhance the contrast of an image
+    hist, bins = np.histogram(image.flatten(), 256, [0, 256])
+    cdf = hist.cumsum()
+    # cdf_normalized = cdf * hist.max()/ cdf.max()
+    # plt.plot(cdf_normalized, color = 'b')
+    # plt.hist(image.flatten(), 256, [0, 256], color = 'r')
+    # plt.xlim([0, 256])
+    # plt.show()
+    cdf_m = np.ma.masked_equal(cdf, 0)
+    cdf_m = (cdf_m - cdf_m.min())*255/(cdf_m.max()-cdf_m.min())
+    cdf = np.ma.filled(cdf_m, 0).astype('uint8')
+    enhanced_image = cdf[image]
+    return enhanced_image
+
+
+def make_mask(im):
+    # make a binary mask of an image
+    (thresh, im_bw) = cv2.threshold(im, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+    kernel = np.ones((6, 6), np.uint8)
+    img_erosion = cv2.erode(im_bw, kernel, iterations=2)
+    dilated_img = cv2.dilate(img_erosion, kernel, iterations=2)
+    img_erosion2 = cv2.erode(dilated_img, kernel, iterations=3)
+    binary_img = cv2.dilate(img_erosion2, kernel, iterations=3)
+    return binary_img
 
 
 def main(argv=None):
