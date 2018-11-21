@@ -21,8 +21,9 @@ import pandas as pd
 SUCCESS = 0
 INVALID_DATA = 1
 NO_SUCH_DIRECTORY = 2
-DEFAULT_PATH_NAME = 'C:/Users/Agnes Resto Irizarry/AppData/Local/Packages/CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc/LocalState/rootfs/home/aresto/' \
-                    'image_processing_project/image_processing_project/data/foxa2-localized/'
+DEFAULT_PATH_NAME = 'C:/Users/Agnes Resto Irizarry/AppData/Local/Packages/CanonicalGroupLimited.UbuntuonWindows' \
+                    '_79rhkp1fndgsc/LocalState/rootfs/home/aresto/image_processing_project/image_processing_project/' \
+                    'data/foxa2-localized/'
 
 
 def warning(*objs):
@@ -144,4 +145,3 @@ def main(argv=None):
 if __name__ == "__main__":
     status = main()
     sys.exit(status)
-

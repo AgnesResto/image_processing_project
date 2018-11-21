@@ -4,7 +4,6 @@ Unit testing for image_processing_project.py
 import errno
 import os
 import sys
-import unittest
 from contextlib import contextmanager
 from io import StringIO
 import logging
@@ -91,6 +90,7 @@ def capture_stdout(command, *args, **kwargs):
     yield sys.stdout.read()
     sys.stdout = out
 
+
 @contextmanager
 def capture_stderr(command, *args, **kwargs):
     # pycharm doesn't know six very well, so ignore the false warning
@@ -100,6 +100,7 @@ def capture_stderr(command, *args, **kwargs):
     sys.stderr.seek(0)
     yield sys.stderr.read()
     sys.stderr = err
+
 
 if __name__ == '__main__':
     unittest.main()
