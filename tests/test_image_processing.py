@@ -9,7 +9,7 @@ from contextlib import contextmanager
 from io import StringIO
 import numpy as np
 import logging
-from image_processing_project import main, image_analysis, parse_cmdline, get_file_names, names_dict, pvalue_analysis2
+from image_processing_project import main, image_analysis, parse_cmdline
 import unittest
 
 logging.basicConfig(level=logging.DEBUG)
@@ -62,6 +62,16 @@ class TestMain(unittest.TestCase):
             silent_remove(DEF_CSV_OUT, disable=DISABLE_REMOVE)
 
 
+class TestMainFailWell(unittest.TestCase):
+    def test_wrongpath(self):
+        # test if the folder path does not exist
+        test_input2 = ["-p", 'example.csv']
+        if logger.isEnabledFor(logging.DEBUG):
+            main(test_input2)
+        with capture_stderr(main, test_input2) as output:
+            self.assertTrue("No such directory" in output)
+
+
 class TestDataAnalysis(unittest.TestCase):
     def test__Normalization(self):
         # test if the images are being properly normalized by comparing the intensity of a
@@ -82,6 +92,15 @@ def capture_stdout(command, *args, **kwargs):
     yield sys.stdout.read()
     sys.stdout = out
 
+@contextmanager
+def capture_stderr(command, *args, **kwargs):
+    # pycharm doesn't know six very well, so ignore the false warning
+    # noinspection PyCallingNonCallable
+    err, sys.stderr = sys.stderr, StringIO()
+    command(*args, **kwargs)
+    sys.stderr.seek(0)
+    yield sys.stderr.read()
+    sys.stderr = err
 
 if __name__ == '__main__':
     unittest.main()

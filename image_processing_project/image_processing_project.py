@@ -8,6 +8,7 @@ processing of immunofluorescent staining
 Handles the primary functions
 """
 
+from __future__ import print_function
 import os
 import glob
 import sys
@@ -19,11 +20,9 @@ from scipy import stats
 import errno
 
 
-
 SUCCESS = 0
 INVALID_DATA = 1
-IO_ERROR = 2
-ENNOENT = 3
+NO_SUCH_DIRECTORY = 2
 DEFAULT_PATH_NAME = 'C:/Users/Agnes Resto Irizarry/AppData/Local/Packages/CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc/LocalState/rootfs/home/aresto/image_processing_project/image_processing_project/data/foxa2-localized/'
 #DEFAULT_PATH_NAME = 'C:/Users/Agnes Resto Irizarry/Desktop/DataSci/foxa2-localized/'
 
@@ -68,12 +67,6 @@ def image_analysis(folder_path):
             # normalize the fluorescent channels using dapi
             normalized_nkx2 = cv2.divide(nkx2, dapi)
             normalized_foxa3 = cv2.divide(foxa3, dapi)
-            # analyze fluorescent intensity of each channel of interest
-            # nkx2_hist = cv2.calcHist([normalized_nkx2], [0], None, [256], [0, 256])
-            # foxa3_hist = cv2.calcHist([normalized_foxa3], [0], None, [256], [0, 256])
-            # plt.plot(nkx2_hist)
-            # plt.plot(foxa3_hist)
-            # plt.show()
             f1_intensity.append(np.mean(nkx2))
             f2_intensity.append(np.mean(foxa3))
             f1_normalized_intensity.append(np.mean(normalized_nkx2))
@@ -100,15 +93,13 @@ def parse_cmdline(argv):
     args = None
     try:
         args = parser.parse_args(argv)
-        a = os.path.exists(args.path_data_file)
-        if a != 1:
-            print("path does not exist")
-    except IOError as e:
-        print("No such directory:", e)
+        os.chdir(args.path_data_file)
+    except OSError as e:
+        warning("No such directory: ", e)
         parser.print_help()
-        return args, IO_ERROR
-    return args.path_data_file, SUCCESS
+        return args.path_data_file, NO_SUCH_DIRECTORY
 
+    return args.path_data_file, SUCCESS
 
 
 def get_file_names(path):
@@ -130,17 +121,17 @@ def names_dict(files_in_folder):
     return dictionary
 
 
-def pvalue_analysis2(intensity_data1, intensity_data2):
+# def pvalue_analysis2(intensity_data1, intensity_data2):
     # analyze differences in fluorescent intensity between different conditions by getting the pvalue
-    t, p = stats.ttest_ind(intensity_data1, intensity_data2)
-    return t, p
+    # t, p = stats.ttest_ind(intensity_data1, intensity_data2)
+    # return t, p
 
 
 def main(argv=None):
     path1, ret = parse_cmdline(argv)
-    print("This is the path: ", path1)
-    if ret != 0:
+    if ret != SUCCESS:
         return ret
+
     nkx2, foxa3, normalized_nkx2, normalized_foxa3 = image_analysis(path1)
 
     base_out_fname = path1 + '_averages3'
@@ -149,7 +140,7 @@ def main(argv=None):
     np.savetxt(out_fname, np.row_stack((normalized_nkx2, normalized_foxa3)), delimiter=',')
     print("Wrote file: {}".format(out_fname))
 
-    return 0  # success
+    return SUCCESS
 
 
 if __name__ == "__main__":
