@@ -3,7 +3,10 @@
 
 """
 image_processing_project.py
-processing of immunofluorescent staining
+processing of immunofluorescent staining: the program is able to read files in a folder, get the file types of interest
+(TIF), group the different channels of an image by number, normalize channels of interest (*488.TIF, *561.TIF) by
+their respective 405.TIF, and output the average intensity of each image of each channel
+Default path name points to sample data under image_processing_project/data/foxa2-localized
 
 Handles the primary functions
 """
@@ -21,9 +24,14 @@ import pandas as pd
 SUCCESS = 0
 INVALID_DATA = 1
 NO_SUCH_DIRECTORY = 2
-DEFAULT_PATH_NAME = 'C:/Users/Agnes Resto Irizarry/AppData/Local/Packages/CanonicalGroupLimited.UbuntuonWindows' \
-                    '_79rhkp1fndgsc/LocalState/rootfs/home/aresto/image_processing_project/image_processing_project/' \
-                    'data/foxa2-localized/'
+
+CURRENT_DIR = os.path.dirname(__file__)
+MAIN_DIR = os.path.join(CURRENT_DIR, '..')
+TEST_DATA_DIR = os.path.join(CURRENT_DIR, 'image_processing_project')
+PROJ_DIR = os.path.join(MAIN_DIR, 'image_processing_project')
+DATA_DIR = os.path.join(PROJ_DIR, 'data')
+SAMPLE_DATA_FILE_LOC = os.path.join(DATA_DIR, 'foxa2-localized/')
+DEFAULT_PATH_NAME = SAMPLE_DATA_FILE_LOC
 
 
 def warning(*objs):
@@ -83,9 +91,8 @@ def parse_cmdline(argv):
         argv = sys.argv[1:]
 
     # initialize the parser object:
-    parser = ArgumentParser(description='Reads images with fluorescent staining and analyzes fluorescent intensity of '
-                                        'each channel and morphology of each cell cluster. Additionally, it computes '
-                                        'the p-value of the fluorescent intensity of each channel.')
+    parser = ArgumentParser(description='Reads images with fluorescent staining and analyzes fluorescent intensity '
+                                        'of each channel.')
     parser.add_argument("-p", "--path_data_file", help="The location (directory path) of the csv file with the images"
                                                        "data to analyze",
                         default=DEFAULT_PATH_NAME)
@@ -136,8 +143,8 @@ def main(argv=None):
 
     base_out_fname = path1 + '_averages1'
     out_fname = base_out_fname + '.csv'
-    np.savetxt(out_fname, np.c_[normalized_nkx2, normalized_foxa3], header=','.join(["channel1_intensity",
-                                                                                     "channel2_intensity"]))
+    np.savetxt(out_fname, np.c_[normalized_nkx2, normalized_foxa3], header=','.join(["channel1_intensity_",
+                                                                                     "channel2_intensity_"]))
     print("Wrote file: {}".format(out_fname))
 
     return SUCCESS
