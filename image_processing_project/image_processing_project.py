@@ -14,7 +14,7 @@ import sys
 from argparse import ArgumentParser
 import cv2
 import numpy as np
-#import pandas as pd
+import pandas as pd
 from scipy import stats
 import errno
 
@@ -68,8 +68,9 @@ def parse_cmdline(argv):
     args = None
     try:
         args = parser.parse_args(argv)
-        print(args)
-        os.chdir(args.path_data_file)
+        a = os.path.exists(args.path_data_file)
+        if a != 1:
+            print("path does not exist")
     except errno.ENOENT as e:
         print("No such directory:", e)
         parser.print_help()
@@ -79,7 +80,7 @@ def parse_cmdline(argv):
         parser.print_help()
         return args, IO_ERROR
 
-    return args, SUCCESS
+    return args.path_data_file, SUCCESS
 
 
 def get_file_names(path):
@@ -135,9 +136,48 @@ def pvalue_analysis2(intensity_data1, intensity_data2):
 
 
 def main(argv=None):
-    args, ret = parse_cmdline(argv)
+    path1, ret = parse_cmdline(argv)
+    print("This is the path: ", path1)
     if ret != 0:
         return ret
+    file_names = get_file_names(path1)
+    print(file_names)
+    grouped_images = names_dict(file_names)
+
+    # specify the number of channels
+    num_channels = 4
+
+    nkx2_intensity = []
+    foxa3_intensity = []
+    for k, v in grouped_images.items():
+        names = pd.Series(v)
+        # process images only if you have the images from all of the channels
+        if len(names) == num_channels:
+            # read each channel of interest as a grayscale image
+            dapi = cv2.imread(path1 + names[1], 0)
+            nkx2 = cv2.imread(path1 + names[2], 0)
+            foxa3 = cv2.imread(path1 + names[3], 0)
+            # normalize the fluorescent channels using dapi
+            normalized_nkx2 = cv2.divide(nkx2, dapi)
+            normalized_foxa3 = cv2.divide(foxa3, dapi)
+            # analyze fluorescent intensity of each channel of interest
+            # nkx2_hist = cv2.calcHist([normalized_nkx2], [0], None, [256], [0, 256])
+            # foxa3_hist = cv2.calcHist([normalized_foxa3], [0], None, [256], [0, 256])
+            # plt.plot(nkx2_hist)
+            # plt.plot(foxa3_hist)
+            # plt.show()
+            nkx2_intensity.append(np.mean(normalized_nkx2))
+            foxa3_intensity.append(np.mean(normalized_foxa3))
+            # analyze cyst properties
+            enhanced_dapi = enhance_contrast(dapi)
+            cyst_binary = make_mask(enhanced_dapi)
+
+
+        else:
+            print('You do not have all the channels')
+
+    print('nkx2_intensity', nkx2_intensity)
+
     # print(canvas(args.no_attribution))
     return 0  # success
 
