@@ -24,7 +24,7 @@ SUCCESS = 0
 INVALID_DATA = 1
 IO_ERROR = 2
 ENNOENT = 3
-DEFAULT_PATH_NAME = 'C:/Users/Agnes Resto Irizarry/AppData/Local/Packages/CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc/LocalState/rootfs/home/aresto/image_processing_project/image_processing_project/data/sample_data/'
+DEFAULT_PATH_NAME = 'C:/Users/Agnes Resto Irizarry/AppData/Local/Packages/CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc/LocalState/rootfs/home/aresto/image_processing_project/image_processing_project/data/foxa2-localized/'
 #DEFAULT_PATH_NAME = 'C:/Users/Agnes Resto Irizarry/Desktop/DataSci/foxa2-localized/'
 
 
@@ -187,8 +187,9 @@ def main(argv=None):
     if ret != 0:
         return ret
     nkx2_intensity, foxa3_intensity = image_analysis(path1)
+    print(nkx2_intensity, foxa3_intensity)
     #base_out_fname = os.path.basename(path1)
-    base_out_fname = path1 + '_averages'
+    base_out_fname = path1 + '_averages1'
     out_fname = base_out_fname + '.csv'
     np.savetxt(out_fname, nkx2_intensity, delimiter=',')
     np.savetxt(out_fname, np.row_stack((nkx2_intensity, foxa3_intensity)), delimiter=',')
