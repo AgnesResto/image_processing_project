@@ -14,7 +14,7 @@ import argparse
 import cv2
 import numpy as np
 #import pandas as pd
-#from scipy import stats
+from scipy import stats
 
 
 def warning(*objs):
@@ -109,6 +109,12 @@ def make_mask(im):
     img_erosion2 = cv2.erode(dilated_img, kernel, iterations=3)
     binary_img = cv2.dilate(img_erosion2, kernel, iterations=3)
     return binary_img
+
+
+def pvalue_analysis2(intensity_data1, intensity_data2):
+    # analyze differences in fluorescent intensity between different conditions by getting the pvalue
+    t, p = stats.ttest_ind(intensity_data1, intensity_data2)
+    return t, p
 
 
 def main(argv=None):
