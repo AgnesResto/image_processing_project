@@ -104,10 +104,10 @@ def parse_cmdline(argv):
         a = os.path.exists(args.path_data_file)
         if a != 1:
             print("path does not exist")
-    except errno.ENOENT as e:
+    except IOError as e:
         print("No such directory:", e)
         parser.print_help()
-        return args, ENNOENT
+        return args, IO_ERROR
     return args.path_data_file, SUCCESS
 
 

@@ -9,7 +9,7 @@ from contextlib import contextmanager
 from io import StringIO
 import numpy as np
 import logging
-from image_processing_project import main, image_analysis, parse_cmdline
+from image_processing_project import main, image_analysis, parse_cmdline, get_file_names, names_dict, pvalue_analysis2
 import unittest
 
 logging.basicConfig(level=logging.DEBUG)
@@ -42,13 +42,13 @@ def silent_remove(filename, disable=False):
 
 
 class TestParser(unittest.TestCase):
-    def testSampleData(self):
+    def test_SampleData(self):
         test_input = SAMPLE_DATA_FILE_LOC
         try:
             if logger.isEnabledFor(logging.DEBUG):
                 parse_cmdline(test_input)
             with capture_stdout(main, test_input) as output:
-                self.assertTrue(os.path.isfile('C:/Users/Agnes Resto Irizarry/AppData/Local/Packages/CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc/LocalState/rootfs/home/aresto/image_processing_project/data/foxa2-localized'))
+                self.assertTrue(os.path.isfile('C:/Users/Agnes Resto Irizarry/AppData/Local/Packages/CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc/LocalState/rootfs/home/aresto/image_processing_project/image_processing_project/data/foxa2-localized'))
 
             self.assertTrue(os.path.isdir('C:/Users/Agnes Resto Irizarry/AppData/Local/Packages/CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc/LocalState/rootfs/home/aresto/image_processing_project/data/foxa2-localized'))
         finally:
@@ -56,7 +56,7 @@ class TestParser(unittest.TestCase):
 
 
 class TestDataAnalysis(unittest.TestCase):
-    def testNormalization(self):
+    def test__Normalization(self):
         nkx2, foxa3, normalized_nkx2, normalized_foxa3 = image_analysis(SAMPLE_DATA_FILE_LOC)
         print(nkx2, normalized_nkx2)
         self.assertGreater(nkx2, normalized_nkx2)
@@ -72,3 +72,7 @@ def capture_stdout(command, *args, **kwargs):
     sys.stdout.seek(0)
     yield sys.stdout.read()
     sys.stdout = out
+
+
+if __name__ == '__main__':
+    unittest.main()
