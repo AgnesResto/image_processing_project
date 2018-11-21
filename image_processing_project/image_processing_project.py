@@ -55,6 +55,8 @@ def image_analysis(folder_path):
 
     f1_intensity = []
     f2_intensity = []
+    f1_normalized_intensity = []
+    f2_normalized_intensity = []
     for k, v in grouped_images.items():
         names = pd.Series(v)
         # process images only if you have the images from all of the channels
@@ -72,28 +74,13 @@ def image_analysis(folder_path):
             # plt.plot(nkx2_hist)
             # plt.plot(foxa3_hist)
             # plt.show()
-            f1_intensity.append(np.mean(normalized_nkx2))
-            f2_intensity.append(np.mean(normalized_foxa3))
+            f1_intensity.append(np.mean(nkx2))
+            f2_intensity.append(np.mean(foxa3))
+            f1_normalized_intensity.append(np.mean(normalized_nkx2))
+            f2_normalized_intensity.append(np.mean(normalized_foxa3))
 
-    return f1_intensity, f2_intensity
+    return f1_intensity, f2_intensity, f1_normalized_intensity, f2_normalized_intensity
 
-
-def canvas(with_attribution=True):
-    """
-    Placeholder function to show example docstring (NumPy format)
-
-
-
-    Returns
-    -------
-    quote : str
-        Compiled string including quote and optional attribution
-    """
-
-    quote = "The code is but a canvas to our imagination."
-    if with_attribution:
-        quote += "\n\t- Adapted from Henry David Thoreau"
-    return quote
 
 
 def parse_cmdline(argv):
@@ -186,13 +173,12 @@ def main(argv=None):
     print("This is the path: ", path1)
     if ret != 0:
         return ret
-    nkx2_intensity, foxa3_intensity = image_analysis(path1)
-    print(nkx2_intensity, foxa3_intensity)
-    #base_out_fname = os.path.basename(path1)
-    base_out_fname = path1 + '_averages1'
+    nkx2, foxa3, normalized_nkx2, normalized_foxa3 = image_analysis(path1)
+    print(normalized_nkx2, normalized_foxa3)
+    base_out_fname = path1 + '_averages2'
     out_fname = base_out_fname + '.csv'
-    np.savetxt(out_fname, nkx2_intensity, delimiter=',')
-    np.savetxt(out_fname, np.row_stack((nkx2_intensity, foxa3_intensity)), delimiter=',')
+    np.savetxt(out_fname, normalized_nkx2, delimiter=',')
+    np.savetxt(out_fname, np.row_stack((normalized_nkx2, normalized_foxa3)), delimiter=',')
     print("Wrote file: {}".format(out_fname))
 
     return 0  # success
