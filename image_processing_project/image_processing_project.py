@@ -16,15 +16,13 @@ from argparse import ArgumentParser
 import cv2
 import numpy as np
 import pandas as pd
-from scipy import stats
-import errno
 
 
 SUCCESS = 0
 INVALID_DATA = 1
 NO_SUCH_DIRECTORY = 2
-DEFAULT_PATH_NAME = 'C:/Users/Agnes Resto Irizarry/AppData/Local/Packages/CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc/LocalState/rootfs/home/aresto/image_processing_project/image_processing_project/data/foxa2-localized/'
-#DEFAULT_PATH_NAME = 'C:/Users/Agnes Resto Irizarry/Desktop/DataSci/foxa2-localized/'
+DEFAULT_PATH_NAME = 'C:/Users/Agnes Resto Irizarry/AppData/Local/Packages/CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc/LocalState/rootfs/home/aresto/' \
+                    'image_processing_project/image_processing_project/data/foxa2-localized/'
 
 
 def warning(*objs):

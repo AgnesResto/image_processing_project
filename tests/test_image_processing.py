@@ -1,5 +1,5 @@
 """
-Unit and regression test for image_processing_project.py
+Unit testing for image_processing_project.py
 """
 import errno
 import os
@@ -7,9 +7,8 @@ import sys
 import unittest
 from contextlib import contextmanager
 from io import StringIO
-import numpy as np
 import logging
-from image_processing_project import main, image_analysis, parse_cmdline
+from image_processing_project import main, image_analysis
 import unittest
 
 logging.basicConfig(level=logging.DEBUG)
