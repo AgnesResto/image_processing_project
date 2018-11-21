@@ -120,6 +120,7 @@ def names_dict(files_in_folder):
     return dictionary
 
 
+# for the future, I will add in the ability to calculate pvalues when there is more than one experimental condition
 # def pvalue_analysis2(intensity_data1, intensity_data2):
     # analyze differences in fluorescent intensity between different conditions by getting the pvalue
     # t, p = stats.ttest_ind(intensity_data1, intensity_data2)
@@ -133,10 +134,10 @@ def main(argv=None):
 
     nkx2, foxa3, normalized_nkx2, normalized_foxa3 = image_analysis(path1)
 
-    base_out_fname = path1 + '_averages3'
+    base_out_fname = path1 + '_averages1'
     out_fname = base_out_fname + '.csv'
-    np.savetxt(out_fname, normalized_nkx2, delimiter=',')
-    np.savetxt(out_fname, np.row_stack((normalized_nkx2, normalized_foxa3)), delimiter=',')
+    np.savetxt(out_fname, np.c_[normalized_nkx2, normalized_foxa3], header=','.join(["channel1_intensity",
+                                                                                     "channel2_intensity"]))
     print("Wrote file: {}".format(out_fname))
 
     return SUCCESS

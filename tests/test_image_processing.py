@@ -21,10 +21,9 @@ PROJ_DIR = os.path.join(MAIN_DIR, 'image_processing_project')
 DATA_DIR = os.path.join(PROJ_DIR, 'data')
 SAMPLE_DATA_FILE_LOC = os.path.join(DATA_DIR, 'foxa2-localized/')
 print('This is your sample data path: ', SAMPLE_DATA_FILE_LOC)
-DEF_CVS_OUT = os.path.join(MAIN_DIR, 'sample_data_stats.csv')
 
 
-DEF_CSV_OUT = os.path.join(MAIN_DIR, '_averages3.csv')
+DEF_CSV_OUT = os.path.join(MAIN_DIR, '_averages1.csv')
 
 
 def silent_remove(filename, disable=False):
@@ -52,10 +51,10 @@ class TestMain(unittest.TestCase):
                 main(test_input)
             # checks that the expected message is sent to standard out
             with capture_stdout(main, test_input) as output:
-                self.assertTrue("averages3.csv" in output)
+                self.assertTrue("averages1.csv" in output)
 
-            print("output path: ", SAMPLE_DATA_FILE_LOC + "_averages3.csv")
-            self.assertTrue(os.path.isfile(SAMPLE_DATA_FILE_LOC + "/_averages3.csv"))
+            print("output path: ", SAMPLE_DATA_FILE_LOC + "_averages1.csv")
+            self.assertTrue(os.path.isfile(SAMPLE_DATA_FILE_LOC + "/_averages1.csv"))
         finally:
             silent_remove(DEF_CSV_OUT, disable=DISABLE_REMOVE)
 
