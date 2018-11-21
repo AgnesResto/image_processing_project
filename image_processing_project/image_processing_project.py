@@ -7,7 +7,8 @@ processing of immunofluorescent staining
 
 Handles the primary functions
 """
-
+import os
+import glob
 import sys
 import argparse
 
@@ -58,6 +59,15 @@ def parse_cmdline(argv):
         return args, 2
 
     return args, 0
+
+
+def get_file_names(path):
+    # obtain all of the image names from a folder and create paths to get each of them
+    names_images = []
+    os.chdir(path)
+    for file in glob.glob("*.TIF"):
+        names_images.append(file)
+    return names_images
 
 
 def main(argv=None):
