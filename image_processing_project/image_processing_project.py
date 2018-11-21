@@ -22,9 +22,9 @@ SUCCESS = 0
 INVALID_DATA = 1
 IO_ERROR = 2
 ENNOENT = 3
-# DEFAULT_PATH_NAME = 'C:/Users/Agnes Resto Irizarry/AppData/Local/Packages/CanonicalGroupLimited.UbuntuonWindows_' \
-                    # '79rhkp1fndgsc/LocalState/rootfs/home/aresto/datasci_project_/data/external/foxa2-localized/'
-DEFAULT_PATH_NAME = 'C:/Users/Agnes Resto Irizarry/Desktop/DataSci/foxa2-localized/'
+DEFAULT_PATH_NAME = 'C:/Users/Agnes Resto Irizarry/AppData/Local/Packages/CanonicalGroupLimited.UbuntuonWindows_' \
+                    '79rhkp1fndgsc/LocalState/rootfs/home/aresto/datasci_project_/data/external/foxa2-localized/'
+#DEFAULT_PATH_NAME = 'C:/Users/Agnes Resto Irizarry/Desktop/DataSci/foxa2-localized/'
 
 
 def warning(*objs):
@@ -69,15 +69,15 @@ def parse_cmdline(argv):
     try:
         args = parser.parse_args(argv)
         print(args)
-        os.chdir(str(args.path_data_file))
+        os.chdir(args.path_data_file)
     except errno.ENOENT as e:
         print("No such directory:", e)
         parser.print_help()
         return args, ENNOENT
-    except ValueError as e:
+    except IOError as e:
         print("Invalid path name:", e)
         parser.print_help()
-        return args, INVALID_DATA
+        return args, IO_ERROR
 
     return args, SUCCESS
 
@@ -138,10 +138,11 @@ def main(argv=None):
     args, ret = parse_cmdline(argv)
     if ret != 0:
         return ret
-    print(canvas(args.no_attribution))
+    # print(canvas(args.no_attribution))
     return 0  # success
 
 
 if __name__ == "__main__":
     status = main()
     sys.exit(status)
+
