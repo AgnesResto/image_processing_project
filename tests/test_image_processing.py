@@ -43,7 +43,7 @@ def silent_remove(filename, disable=False):
 
 class TestParser(unittest.TestCase):
     def testSampleData(self):
-        test_input = [SAMPLE_DATA_FILE_LOC]
+        test_input = SAMPLE_DATA_FILE_LOC
         try:
             if logger.isEnabledFor(logging.DEBUG):
                 parse_cmdline(test_input)
@@ -61,10 +61,6 @@ class TestDataAnalysis(unittest.TestCase):
         print(nkx2, normalized_nkx2)
         self.assertGreater(nkx2, normalized_nkx2)
         self.assertGreater(foxa3, normalized_foxa3)
-        if self.assertGreater(nkx2, normalized_nkx2):
-            print('normalization worked')
-        else:
-            print('normalization did not work')
 
 
 @contextmanager
