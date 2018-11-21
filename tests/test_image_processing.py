@@ -21,8 +21,8 @@ MAIN_DIR = os.path.join(CURRENT_DIR, '..')
 TEST_DATA_DIR = os.path.join(CURRENT_DIR, 'image_processing_project')
 PROJ_DIR = os.path.join(MAIN_DIR, 'image_processing_project')
 DATA_DIR = os.path.join(PROJ_DIR, 'data')
-SAMPLE_DATA_FILE_LOC = os.path.join(DATA_DIR, 'foxa2-localized')
-
+SAMPLE_DATA_FILE_LOC = os.path.join(DATA_DIR, 'foxa2-localized/')
+print('This is your sample data path: ', SAMPLE_DATA_FILE_LOC)
 DEF_CVS_OUT = os.path.join(MAIN_DIR, 'sample_data_stats.csv')
 
 
