@@ -11,6 +11,10 @@ import os
 import glob
 import sys
 import argparse
+#import cv2
+#import numpy as np
+#import pandas as pd
+#from scipy import stats
 
 
 def warning(*objs):
@@ -68,6 +72,16 @@ def get_file_names(path):
     for file in glob.glob("*.TIF"):
         names_images.append(file)
     return names_images
+
+
+def names_dict(files_in_folder):
+    # group channels of each image in a dictionary
+    dictionary = {}
+    for x in files_in_folder:
+        group = dictionary.get(x[:11], [])
+        group.append(x)
+        dictionary[x[:11]] = group
+    return dictionary
 
 
 def main(argv=None):
