@@ -26,6 +26,9 @@ print('This is your sample data path: ', SAMPLE_DATA_FILE_LOC)
 DEF_CVS_OUT = os.path.join(MAIN_DIR, 'sample_data_stats.csv')
 
 
+DEF_CSV_OUT = os.path.join(MAIN_DIR, '_averages3.csv')
+
+
 def silent_remove(filename, disable=False):
     """
     Removes the target file name, catching and ignoring errors that indicate that the
@@ -41,22 +44,28 @@ def silent_remove(filename, disable=False):
                 raise
 
 
-class TestParser(unittest.TestCase):
-    def test_SampleData(self):
-        test_input = SAMPLE_DATA_FILE_LOC
+class TestMain(unittest.TestCase):
+    # These tests make sure that the program can run properly from main
+    def testSampleDataOutput(self):
+        test_input = ["-p", SAMPLE_DATA_FILE_LOC]
+        # Checks that runs with defaults and that files are created
         try:
             if logger.isEnabledFor(logging.DEBUG):
-                parse_cmdline(test_input)
+                main(test_input)
+            # checks that the expected message is sent to standard out
             with capture_stdout(main, test_input) as output:
-                self.assertTrue(os.path.isfile('C:/Users/Agnes Resto Irizarry/AppData/Local/Packages/CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc/LocalState/rootfs/home/aresto/image_processing_project/image_processing_project/data/foxa2-localized'))
+                self.assertTrue("averages3.csv" in output)
 
-            self.assertTrue(os.path.isdir('C:/Users/Agnes Resto Irizarry/AppData/Local/Packages/CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc/LocalState/rootfs/home/aresto/image_processing_project/data/foxa2-localized'))
+            print("output path: ", SAMPLE_DATA_FILE_LOC + "_averages3.csv")
+            self.assertTrue(os.path.isfile(SAMPLE_DATA_FILE_LOC + "/_averages3.csv"))
         finally:
-            silent_remove(DEF_CVS_OUT, disable=DISABLE_REMOVE)
+            silent_remove(DEF_CSV_OUT, disable=DISABLE_REMOVE)
 
 
 class TestDataAnalysis(unittest.TestCase):
     def test__Normalization(self):
+        # test if the images are being properly normalized by comparing the intensity of a
+        # normalized image with the original intensity
         nkx2, foxa3, normalized_nkx2, normalized_foxa3 = image_analysis(SAMPLE_DATA_FILE_LOC)
         print(nkx2, normalized_nkx2)
         self.assertGreater(nkx2, normalized_nkx2)

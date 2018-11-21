@@ -82,7 +82,6 @@ def image_analysis(folder_path):
     return f1_intensity, f2_intensity, f1_normalized_intensity, f2_normalized_intensity
 
 
-
 def parse_cmdline(argv):
     """
     Returns the parsed argument list and return code.
@@ -109,6 +108,7 @@ def parse_cmdline(argv):
         parser.print_help()
         return args, IO_ERROR
     return args.path_data_file, SUCCESS
+
 
 
 def get_file_names(path):
@@ -142,8 +142,8 @@ def main(argv=None):
     if ret != 0:
         return ret
     nkx2, foxa3, normalized_nkx2, normalized_foxa3 = image_analysis(path1)
-    print(normalized_nkx2, normalized_foxa3)
-    base_out_fname = path1 + '_averages2'
+
+    base_out_fname = path1 + '_averages3'
     out_fname = base_out_fname + '.csv'
     np.savetxt(out_fname, normalized_nkx2, delimiter=',')
     np.savetxt(out_fname, np.row_stack((normalized_nkx2, normalized_foxa3)), delimiter=',')
