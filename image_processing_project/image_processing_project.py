@@ -17,19 +17,65 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 import errno
+import csv
+
 
 SUCCESS = 0
 INVALID_DATA = 1
 IO_ERROR = 2
 ENNOENT = 3
-DEFAULT_PATH_NAME = 'C:/Users/Agnes Resto Irizarry/AppData/Local/Packages/CanonicalGroupLimited.UbuntuonWindows_' \
-                    '79rhkp1fndgsc/LocalState/rootfs/home/aresto/datasci_project_/data/external/foxa2-localized/'
+DEFAULT_PATH_NAME = 'C:/Users/Agnes Resto Irizarry/AppData/Local/Packages/CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc/LocalState/rootfs/home/aresto/image_processing_project/image_processing_project/data/sample_data/'
 #DEFAULT_PATH_NAME = 'C:/Users/Agnes Resto Irizarry/Desktop/DataSci/foxa2-localized/'
 
 
 def warning(*objs):
     """Writes a message to stderr."""
     print("WARNING: ", *objs, file=sys.stderr)
+
+
+def image_analysis(folder_path):
+    """
+    Finds the average intensity in grayscale images
+    
+    Parameters
+    -------
+    folder_path : directory path of images of interest
+
+    Returns
+    -------
+    fluorescent_intensity : numpy array
+
+    """
+    file_names = get_file_names(folder_path)
+    print(file_names)
+    grouped_images = names_dict(file_names)
+
+    # specify the number of channels
+    num_channels = 4
+
+    f1_intensity = []
+    f2_intensity = []
+    for k, v in grouped_images.items():
+        names = pd.Series(v)
+        # process images only if you have the images from all of the channels
+        if len(names) == num_channels:
+            # read each channel of interest as a grayscale image
+            dapi = cv2.imread(folder_path + names[1], 0)
+            nkx2 = cv2.imread(folder_path + names[2], 0)
+            foxa3 = cv2.imread(folder_path + names[3], 0)
+            # normalize the fluorescent channels using dapi
+            normalized_nkx2 = cv2.divide(nkx2, dapi)
+            normalized_foxa3 = cv2.divide(foxa3, dapi)
+            # analyze fluorescent intensity of each channel of interest
+            # nkx2_hist = cv2.calcHist([normalized_nkx2], [0], None, [256], [0, 256])
+            # foxa3_hist = cv2.calcHist([normalized_foxa3], [0], None, [256], [0, 256])
+            # plt.plot(nkx2_hist)
+            # plt.plot(foxa3_hist)
+            # plt.show()
+            f1_intensity.append(np.mean(normalized_nkx2))
+            f2_intensity.append(np.mean(normalized_foxa3))
+
+    return f1_intensity, f2_intensity
 
 
 def canvas(with_attribution=True):
@@ -140,45 +186,14 @@ def main(argv=None):
     print("This is the path: ", path1)
     if ret != 0:
         return ret
-    file_names = get_file_names(path1)
-    print(file_names)
-    grouped_images = names_dict(file_names)
+    nkx2_intensity, foxa3_intensity = image_analysis(path1)
+    #base_out_fname = os.path.basename(path1)
+    base_out_fname = path1 + '_averages'
+    out_fname = base_out_fname + '.csv'
+    np.savetxt(out_fname, nkx2_intensity, delimiter=',')
+    np.savetxt(out_fname, np.row_stack((nkx2_intensity, foxa3_intensity)), delimiter=',')
+    print("Wrote file: {}".format(out_fname))
 
-    # specify the number of channels
-    num_channels = 4
-
-    nkx2_intensity = []
-    foxa3_intensity = []
-    for k, v in grouped_images.items():
-        names = pd.Series(v)
-        # process images only if you have the images from all of the channels
-        if len(names) == num_channels:
-            # read each channel of interest as a grayscale image
-            dapi = cv2.imread(path1 + names[1], 0)
-            nkx2 = cv2.imread(path1 + names[2], 0)
-            foxa3 = cv2.imread(path1 + names[3], 0)
-            # normalize the fluorescent channels using dapi
-            normalized_nkx2 = cv2.divide(nkx2, dapi)
-            normalized_foxa3 = cv2.divide(foxa3, dapi)
-            # analyze fluorescent intensity of each channel of interest
-            # nkx2_hist = cv2.calcHist([normalized_nkx2], [0], None, [256], [0, 256])
-            # foxa3_hist = cv2.calcHist([normalized_foxa3], [0], None, [256], [0, 256])
-            # plt.plot(nkx2_hist)
-            # plt.plot(foxa3_hist)
-            # plt.show()
-            nkx2_intensity.append(np.mean(normalized_nkx2))
-            foxa3_intensity.append(np.mean(normalized_foxa3))
-            # analyze cyst properties
-            enhanced_dapi = enhance_contrast(dapi)
-            cyst_binary = make_mask(enhanced_dapi)
-
-
-        else:
-            print('You do not have all the channels')
-
-    print('nkx2_intensity', nkx2_intensity)
-
-    # print(canvas(args.no_attribution))
     return 0  # success
 
 
